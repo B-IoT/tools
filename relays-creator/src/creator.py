@@ -3,9 +3,10 @@
 import pandas as pd
 import requests
 import argparse
-import sys
+from decouple import config
 
 SERVER_URL = "https://api.b-iot.ch:8080"
+PASSWORD = config("PASSWORD")
 
 
 def create_relay(session, row):
@@ -21,7 +22,11 @@ def create_relay(session, row):
         "wifi": {"ssid": row["wifi_ssid"], "password": row["password"]},
     }
 
-    session.post(f"{SERVER_URL}/api/relays", json=relay)
+    try:
+        r = session.post(f"{SERVER_URL}/api/relays", json=relay)
+        r.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        raise SystemExit(e)
 
 
 if __name__ == "__main__":
@@ -29,7 +34,7 @@ if __name__ == "__main__":
         description="""
         Given an Excel file, it creates the relays in the client's company database.
         The Excel file need to have the following columns: relay_id, longitude, latitude, floor, username,
-        password, wifi_ssid, wifi_password.
+        password, wifi_ssid, wifi_password. All other columns are ignored.
         """
     )
     parser.add_argument("file", metavar="file", type=str, help="the Excel file")
@@ -40,33 +45,32 @@ if __name__ == "__main__":
     try:
         filename = args.file
         company = args.company
-        df = pd.read_excel(
-            filename,
-            usecols=[
-                "relay_id",
-                "longitude",
-                "latitude",
-                "floor",
-                "username",
-                "password",
-                "wifi_ssid",
-                "wifi_password",
-            ],
-        )
+        columns = [
+            "relay_id",
+            "longitude",
+            "latitude",
+            "floor",
+            "username",
+            "password",
+            "wifi_ssid",
+            "wifi_password",
+        ]
+        df = pd.read_excel(filename, usecols=columns)
 
         with requests.Session() as s:
             print("Authenticating...")
             token = s.post(
                 f"{SERVER_URL}/oauth/token",
-                json={"username": f"biot_{company}", "password": "biot"},
+                json={"username": f"biot_{company}", "password": PASSWORD},
             ).text
             s.headers.update({"Authorization": f"Bearer {token}"})
             print("Authentication succeeded")
 
             print("Creating relays...")
             df.apply(lambda row: create_relay(s, row), axis=1)
+
             print(f"Created {len(df.index)} relays for company {company}")
     except FileNotFoundError:
-        print("Error: file not found!")
-    except:
-        print("Unexpected error: ", sys.exc_info()[0])
+        print("Error -> File not found!")
+    except BaseException as e:
+        print("Error ->", e.args[0])
