@@ -1,7 +1,7 @@
 # relays-creator
 
 Given an Excel file, the script creates the relays in the client's company database.
-The Excel file need to have the following columns: relay_id, longitude, latitude, floor, username,password, wifi_ssid, wifi_password. All other columns are ignored.
+The Excel file need to have the following columns: relay_id, longitude, latitude, floor, username, password, wifi_ssid, wifi_password. All other columns are ignored.
 
 ## Installation
 
