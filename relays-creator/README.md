@@ -1,7 +1,9 @@
 # relays-creator
 
-Given an Excel file, the script creates the relays in the client's company database.
-The Excel file need to have the following columns: relay_id, longitude, latitude, floor, username, password, wifi_ssid, wifi_password. All other columns are ignored.
+Given an Excel file, it creates the relays in the client's company database. The Excel file need to have the
+following columns: relay_id, longitude, latitude, floor, username, password, wifi_ssid, wifi_password. All
+other columns are ignored. Whitespace are not allowed in relay_id, and latitude and longitude need to be
+different from 0.
 
 ## Installation
 
@@ -23,7 +25,9 @@ PASSWORD=<biot_user_password_in_company_db>
 usage: creator.py [-h] file company
 
 Given an Excel file, it creates the relays in the client's company database. The Excel file need to have the
-following columns: relay_id, longitude, latitude, floor, username, password, wifi_ssid, wifi_password. All other columns are ignored.
+following columns: relay_id, longitude, latitude, floor, username, password, wifi_ssid, wifi_password. All
+other columns are ignored. Whitespace are not allowed in relay_id, and latitude and longitude need to be
+different from 0.
 
 positional arguments:
   file        the Excel file
