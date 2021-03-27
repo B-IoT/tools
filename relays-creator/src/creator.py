@@ -10,6 +10,9 @@ PASSWORD = config("PASSWORD")
 
 
 def is_valid(row):
+    if any(row.isna()):
+        return False
+
     relay_id = row["relay_id"].strip()
     if " " in relay_id:
         return False
@@ -20,7 +23,7 @@ def is_valid(row):
     return True
 
 
-def create_relay(session, row):
+def create_relay(session, row, ids_created):
     if is_valid(row):
         relay_id = row["relay_id"].strip()
         relay = {
@@ -31,22 +34,22 @@ def create_relay(session, row):
             "ledStatus": True,
             "latitude": row["latitude"],
             "longitude": row["longitude"],
-            "floor": row["floor"],
+            "floor": int(row["floor"]),
             "wifi": {
                 "ssid": row["wifi_ssid"].strip(),
-                "password": row["password"].strip(),
+                "password": row["wifi_password"].strip(),
             },
         }
 
         try:
             r = session.post(f"{SERVER_URL}/api/relays", json=relay)
             r.raise_for_status()
-            count_created += 1
+            ids_created.append(relay_id)
         except requests.exceptions.RequestException as e:
             raise SystemExit(e)
     else:
         print(
-            f"Error -> Skipping invalid row:\n{row}\nWhitespaces are not allowed in the relay_id, and latitude and longitude need to be different from 0\n"
+            f"Error -> Skipping invalid row:\n{row}\nEmpty (or NaN) fields are not allowed, whitespaces are not allowed in the relay_id, and latitude and longitude need to be different from 0.\n"
         )
 
 
@@ -54,9 +57,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="""
         Given an Excel file, it creates the relays in the client's company database.
-        The Excel file need to have the following columns: relay_id, longitude, latitude, floor, username, 
+        The Excel file need to have the following columns as header: relay_id, longitude, latitude, floor, username, 
         password, wifi_ssid, wifi_password. All other columns are ignored.
-        Whitespace are not allowed in relay_id, and latitude and longitude need to be different from 0.
+        The header should start at the first row of the Excel.
+        Empty fields are not allowed.
+        Whitespace are not allowed in relay_id.
+        Latitude and longitude need to be different from 0.
         """
     )
     parser.add_argument("file", metavar="file", type=str, help="the Excel file")
@@ -64,6 +70,7 @@ if __name__ == "__main__":
         "company", metavar="company", type=str, help="the client's company"
     )
     args = parser.parse_args()
+    print("Welcome to the BIoT relays creator!\n")
     try:
         filename = args.file
         company = args.company
@@ -89,10 +96,13 @@ if __name__ == "__main__":
             print("Authentication succeeded\n")
 
             print("Creating relays...")
-            count_created = 0
-            df.apply(lambda row: create_relay(s, row), axis=1)
+            ids_created = []
+            df.apply(lambda row: create_relay(s, row, ids_created), axis=1)
 
-            print(f"Created {count_created} relays for company {company}")
+            print(
+                f"Created {len(ids_created)} relays for company {company}:\n{ids_created}\n"
+            )
+            print("Bye!")
     except FileNotFoundError:
         print("Error -> File not found!")
     except BaseException as e:
