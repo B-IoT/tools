@@ -18,6 +18,8 @@ PASSWORD=<biot_user_password_in_company_db>
 
 ## Usage
 
+Before usage, you need to make sure that the company's database and biot user have been created.
+
 ```
 usage: creator.py [-h] file company
 
