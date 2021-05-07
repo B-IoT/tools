@@ -70,7 +70,7 @@ if __name__ == "__main__":
         "company", metavar="company", type=str, help="the client's company"
     )
     args = parser.parse_args()
-    print("Welcome to the BIoT relays creator!\n")
+    print("Welcome to the BioT relays creator!\n")
     try:
         filename = args.file
         company = args.company
