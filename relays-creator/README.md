@@ -1,7 +1,7 @@
 # relays-creator
 
 Given an Excel file, it creates the relays in the client's company database.
-The Excel file need to have the following columns as header: relay_id, longitude, latitude, floor, username, 
+The Excel file need to have the following columns as header: relay_id, longitude, latitude, floor, username,
 password, wifi_ssid, wifi_password. All other columns are ignored.
 
 The header should start at the first row of the Excel.
@@ -30,9 +30,9 @@ Before usage, you need to make sure that the company's database and biot user ha
 ```
 usage: creator.py [-h] file company
 
-Given an Excel file, it creates the relays in the client's company database. The Excel file need to have the following columns as header: relay_id,
+Given an Excel file, it creates (or updates if already present) the relays in the client's company database. The Excel file need to have the following columns as header: relay_id,
 longitude, latitude, floor, username, password, wifi_ssid, wifi_password. All other columns are ignored. The header should start at the first row
-of the Excel. Empty fields are not allowed. Whitespace are not allowed in relay_id. Latitude and longitude need to be different from 0.
+of the Excel. Empty fields are not allowed. Whitespaces are not allowed in relay_id. Latitude and longitude need to be different from 0.
 
 positional arguments:
   file        the Excel file

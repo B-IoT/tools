@@ -1,4 +1,4 @@
-# Copyright (c) 2021 BIoT. All rights reserved.
+# Copyright (c) 2021 BioT. All rights reserved.
 
 import pandas as pd
 import requests
@@ -23,7 +23,7 @@ def is_valid(row):
     return True
 
 
-def create_relay(session, row, ids_created):
+def create_or_update_relay(session, row, ids_created, ids_updated):
     if is_valid(row):
         relay_id = row["relay_id"].strip()
         relay = {
@@ -42,9 +42,20 @@ def create_relay(session, row, ids_created):
         }
 
         try:
-            r = session.post(f"{SERVER_URL}/api/relays", json=relay)
-            r.raise_for_status()
-            ids_created.append(relay_id)
+            # First check if it already exists
+            get_req = session.get(f"{SERVER_URL}/api/relays/{relay_id}")
+            if get_req.status_code == 200:
+                # If yes, update
+                update_req = session.put(
+                    f"{SERVER_URL}/api/relays/{relay_id}", json=relay
+                )
+                update_req.raise_for_status()
+                ids_updated.append(relay_id)
+            else:
+                # Otherwise, create
+                create_req = session.post(f"{SERVER_URL}/api/relays", json=relay)
+                create_req.raise_for_status()
+                ids_created.append(relay_id)
         except requests.exceptions.RequestException as e:
             raise SystemExit(e)
     else:
@@ -56,12 +67,12 @@ def create_relay(session, row, ids_created):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="""
-        Given an Excel file, it creates the relays in the client's company database.
+        Given an Excel file, it creates (or updates if already present) the relays in the client's company database.
         The Excel file need to have the following columns as header: relay_id, longitude, latitude, floor, username, 
         password, wifi_ssid, wifi_password. All other columns are ignored.
         The header should start at the first row of the Excel.
         Empty fields are not allowed.
-        Whitespace are not allowed in relay_id.
+        Whitespaces are not allowed in relay_id.
         Latitude and longitude need to be different from 0.
         """
     )
@@ -95,13 +106,24 @@ if __name__ == "__main__":
             s.headers.update({"Authorization": f"Bearer {token}"})
             print("Authentication succeeded\n")
 
-            print("Creating relays...")
+            print("Creating (or updating) relays...")
             ids_created = []
-            df.apply(lambda row: create_relay(s, row, ids_created), axis=1)
-
-            print(
-                f"Created {len(ids_created)} relays for company {company}:\n{ids_created}\n"
+            ids_updated = []
+            df.apply(
+                lambda row: create_or_update_relay(s, row, ids_created, ids_updated),
+                axis=1,
             )
+
+            if ids_created:
+                print(
+                    f"Created {len(ids_created)} relays for company {company}:\n{ids_created}\n"
+                )
+
+            if ids_updated:
+                print(
+                    f"Updated {len(ids_updated)} relays for company {company}:\n{ids_updated}\n"
+                )
+
             print("Bye!")
     except FileNotFoundError:
         print("Error -> File not found!")
