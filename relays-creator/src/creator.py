@@ -46,8 +46,11 @@ def create_or_update_relay(session, row, ids_created, ids_updated):
             get_req = session.get(f"{SERVER_URL}/api/relays/{relay_id}")
             if get_req.status_code == 200:
                 # If yes, update
+                # We need to remove the password, otherwise it will overwrite the encrypted one already stored
+                update_relay = relay.copy()
+                update_relay.pop("mqttPassword")
                 update_req = session.put(
-                    f"{SERVER_URL}/api/relays/{relay_id}", json=relay
+                    f"{SERVER_URL}/api/relays/{relay_id}", json=update_relay
                 )
                 update_req.raise_for_status()
                 ids_updated.append(relay_id)
