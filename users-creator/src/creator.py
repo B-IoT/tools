@@ -5,78 +5,53 @@ import requests
 import argparse
 from decouple import config
 
-SERVER_URL = "https://api.b-iot.ch:8080"
-PASSWORD = config("PASSWORD")
+SERVER_URL = "http://localhost:8080"
 
 
 def is_valid(row):
     if any(row.isna()):
         return False
 
-    relay_id = row["relay_id"].strip()
-    if " " in relay_id:
-        return False
-
-    if float(row["latitude"]) == 0 or float(row["longitude"]) == 0:
+    username = row["username"].strip()
+    if " " in username:
         return False
 
     return True
 
-
-def create_or_update_relay(session, row, ids_created, ids_updated):
+def create_user(session, row, user_id_created):
     if is_valid(row):
-        relay_id = row["relay_id"].strip()
-        relay = {
-            "mqttID": relay_id,
-            "mqttUsername": row["username"].strip(),
-            "mqttPassword": row["password"].strip(),
-            "relayID": relay_id,
-            "ledStatus": True,
-            "latitude": row["latitude"],
-            "longitude": row["longitude"],
-            "floor": int(row["floor"]),
-            "wifi": {
-                "ssid": row["wifi_ssid"].strip(),
-                "password": row["wifi_password"].strip(),
-            },
+        user_id = row["user_id"].strip()
+        print("Adding user with user_id = " + user_id + " ...")
+        user = {
+            "userID": user_id,
+            "username": row["username"],
+            "password": row["password"].strip(),
+            "company": row["company"]
         }
 
         try:
-            # First check if it already exists
-            get_req = session.get(f"{SERVER_URL}/api/relays/{relay_id}")
-            if get_req.status_code == 200:
-                # If yes, update
-                # We need to remove the password, otherwise it will overwrite the encrypted one already stored
-                update_relay = relay.copy()
-                update_relay.pop("mqttPassword")
-                update_req = session.put(
-                    f"{SERVER_URL}/api/relays/{relay_id}", json=update_relay
-                )
-                update_req.raise_for_status()
-                ids_updated.append(relay_id)
-            else:
-                # Otherwise, create
-                create_req = session.post(f"{SERVER_URL}/api/relays", json=relay)
-                create_req.raise_for_status()
-                ids_created.append(relay_id)
+            # Create
+            create_req = session.post(f"{SERVER_URL}/oauth/register", json=user)
+            create_req.raise_for_status()
+            user_id_created.append(user_id)
         except requests.exceptions.RequestException as e:
             raise SystemExit(e)
     else:
         print(
-            f"Error -> Skipping invalid row:\n{row}\nEmpty (or NaN) fields are not allowed, whitespaces are not allowed in the relay_id, and latitude and longitude need to be different from 0.\n"
+            f"Error -> Skipping invalid row:\n{row}\nEmpty (or NaN) fields are not allowed, whitespaces are not allowed in the user_id.\n"
         )
+
+
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="""
-        Given an Excel file, it creates (or updates if already present) the relays in the client's company database.
-        The Excel file need to have the following columns as header: relay_id, longitude, latitude, floor, username, 
-        password, wifi_ssid, wifi_password. All other columns are ignored.
+        Given an Excel file, it creates the users (should NOT already exist) in the client's company database.
+        The Excel file needs to have the following columns as header: user_id, username, password and company. All other columns are ignored.
         The header should start at the first row of the Excel.
         Empty fields are not allowed.
-        Whitespaces are not allowed in relay_id.
-        Latitude and longitude need to be different from 0.
+        Whitespaces are not allowed in user_id, username, password and company.
         """
     )
     parser.add_argument("file", metavar="file", type=str, help="the Excel file")
@@ -84,47 +59,31 @@ if __name__ == "__main__":
         "company", metavar="company", type=str, help="the client's company"
     )
     args = parser.parse_args()
-    print("Welcome to the BioT relays creator!\n")
+    print("Welcome to the BioT users creator!\n")
     try:
         filename = args.file
         company = args.company
         columns = [
-            "relay_id",
-            "longitude",
-            "latitude",
-            "floor",
+            "user_id",
             "username",
             "password",
-            "wifi_ssid",
-            "wifi_password",
+            "company"
         ]
         df = pd.read_excel(filename, usecols=columns)
 
         with requests.Session() as s:
             print("Authenticating...")
-            token = s.post(
-                f"{SERVER_URL}/oauth/token",
-                json={"username": f"biot_{company}", "password": PASSWORD},
-            ).text
-            s.headers.update({"Authorization": f"Bearer {token}"})
-            print("Authentication succeeded\n")
-
-            print("Creating (or updating) relays...")
-            ids_created = []
-            ids_updated = []
+            
+            print("Creating users...")
+            user_id_created = []
             df.apply(
-                lambda row: create_or_update_relay(s, row, ids_created, ids_updated),
+                lambda row: create_user(s, row, user_id_created),
                 axis=1,
             )
 
-            if ids_created:
+            if user_id_created:
                 print(
-                    f"Created {len(ids_created)} relays for company {company}:\n{ids_created}\n"
-                )
-
-            if ids_updated:
-                print(
-                    f"Updated {len(ids_updated)} relays for company {company}:\n{ids_updated}\n"
+                    f"Created {len(user_id_created)} users for company {company}:\n{user_id_created}\n"
                 )
 
             print("Bye!")
