@@ -18,7 +18,7 @@ def is_valid(row):
 
     return True
 
-def create_user(session, row, user_id_created):
+def create_user(session, row, user_id_created, company):
     if is_valid(row):
         user_id = row["user_id"].strip()
         print("Adding user with user_id = " + user_id + " ...")
@@ -26,7 +26,7 @@ def create_user(session, row, user_id_created):
             "userID": user_id,
             "username": row["username"],
             "password": row["password"].strip(),
-            "company": row["company"]
+            "company": company
         }
 
         try:
@@ -48,10 +48,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="""
         Given an Excel file, it creates the users (should NOT already exist) in the client's company database.
-        The Excel file needs to have the following columns as header: user_id, username, password and company. All other columns are ignored.
+        The Excel file needs to have the following columns as header: user_id, username, password. All other columns are ignored.
         The header should start at the first row of the Excel.
         Empty fields are not allowed.
-        Whitespaces are not allowed in user_id, username, password and company.
+        Whitespaces are not allowed in user_id, username, password.
         """
     )
     parser.add_argument("file", metavar="file", type=str, help="the Excel file")
@@ -66,8 +66,7 @@ if __name__ == "__main__":
         columns = [
             "user_id",
             "username",
-            "password",
-            "company"
+            "password"
         ]
         df = pd.read_excel(filename, usecols=columns)
 
@@ -77,7 +76,7 @@ if __name__ == "__main__":
             print("Creating users...")
             user_id_created = []
             df.apply(
-                lambda row: create_user(s, row, user_id_created),
+                lambda row: create_user(s, row, user_id_created, company),
                 axis=1,
             )
 

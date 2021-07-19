@@ -1,7 +1,9 @@
 # users-creator
 
 Given an Excel file, it creates the users in the client's company database.
-The Excel file needs to have the following columns as header: user_id, username, password and company. All other columns are ignored.
+The Excel file needs to have the following columns as header: user_id, username, password. All other columns are ignored.
+
+The company of the users is set automatically to the company name passed as arguments to the script.
 
 The header should start at the first row of the Excel.
 Empty fields are not allowed.
@@ -22,7 +24,7 @@ Before usage, you need to make sure that the company's database has been created
 ```
 usage: creator.py [-h] file company
 
-Given an Excel file, it creates (or updates if already present) the relays in the client's company database. The Excel file needs to have the following columns as header: user_id, username, password and company. All other columns are ignored. The header should start at the first row of the Excel. Empty fields are not allowed. Whitespace are not allowed in user_id, username and password.
+Given an Excel file, it creates (or updates if already present) the relays in the client's company database. The Excel file needs to have the following columns as header: user_id, username, password. All other columns are ignored. The header should start at the first row of the Excel. Empty fields are not allowed. Whitespace are not allowed in user_id, username and password.
 
 positional arguments:
   file        the Excel file
