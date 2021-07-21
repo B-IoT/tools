@@ -17,6 +17,12 @@ First, install the required modules:
 pip install -r requirements.txt
 ```
 
+Then, create a file `.env` in `src/` with the following content:
+
+```
+PASSWORD=<biot_user_password_in_company_db>
+```
+
 ## Usage
 
 Before usage, you need to make sure that the company's database has been created.

@@ -5,7 +5,8 @@ import requests
 import argparse
 from decouple import config
 
-SERVER_URL = "http://localhost:8080"
+SERVER_URL = "https://api.b-iot.ch:8080"
+PASSWORD = config("PASSWORD")
 
 
 def is_valid(row):
@@ -72,6 +73,12 @@ if __name__ == "__main__":
 
         with requests.Session() as s:
             print("Authenticating...")
+            token = s.post(
+                f"{SERVER_URL}/oauth/token",
+                json={"username": f"biot_{company}", "password": PASSWORD},
+            ).text
+            s.headers.update({"Authorization": f"Bearer {token}"})
+            print("Authentication succeeded\n")
             
             print("Creating users...")
             user_id_created = []
