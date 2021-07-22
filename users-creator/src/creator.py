@@ -42,6 +42,23 @@ def create_user(session, row, user_id_created, company):
             f"Error -> Skipping invalid row:\n{row}\nEmpty (or NaN) fields are not allowed, whitespaces are not allowed in the user_id.\n"
         )
 
+def create_biot_user(session, user_id_created, company):
+    user_id = ("biot_" + company).strip()
+    print("Adding biot admin user with user_id = " + user_id + " ...")
+    user = {
+        "userID": user_id,
+        "username": user_id,
+        "password": "biot",
+        "company": company
+    }
+
+    try:
+        # Create
+        create_req = session.post(f"{SERVER_URL}/oauth/register", json=user)
+        create_req.raise_for_status()
+        user_id_created.append(user_id)
+    except requests.exceptions.RequestException as e:
+        raise SystemExit(e)
 
 
 
@@ -53,6 +70,7 @@ if __name__ == "__main__":
         The header should start at the first row of the Excel.
         Empty fields are not allowed.
         Whitespaces are not allowed in user_id, username, password.
+        It adds automatically the BioT admin user with username “biot_<company_name>” and  password “biot”.
         """
     )
     parser.add_argument("file", metavar="file", type=str, help="the Excel file")
@@ -80,8 +98,12 @@ if __name__ == "__main__":
             s.headers.update({"Authorization": f"Bearer {token}"})
             print("Authentication succeeded\n")
             
-            print("Creating users...")
             user_id_created = []
+            print("Creating the BioT admin user...")
+            create_biot_user(s, user_id_created, company)
+            print("BioT admin user created!")
+
+            print("Creating users...")
             df.apply(
                 lambda row: create_user(s, row, user_id_created, company),
                 axis=1,

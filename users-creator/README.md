@@ -8,6 +8,7 @@ The company of the users is set automatically to the company name passed as argu
 The header should start at the first row of the Excel.
 Empty fields are not allowed.
 Whitespace are not allowed in user_id, username and password.
+It adds automatically the BioT admin user with username “biot_<company_name>” and  password “biot”.
 
 ## Installation
 
@@ -35,6 +36,7 @@ The Excel file needs to have the following columns as header: user_id, username,
 The header should start at the first row of the Excel.
 Empty fields are not allowed.
 Whitespaces are not allowed in user_id, username, password.
+It adds automatically the BioT admin user with username “biot_<company_name>” and  password “biot”.
 
 positional arguments:
   file        the Excel file
