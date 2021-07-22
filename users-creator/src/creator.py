@@ -42,7 +42,7 @@ def create_user(session, row, user_id_created, company):
             f"Error -> Skipping invalid row:\n{row}\nEmpty (or NaN) fields are not allowed, whitespaces are not allowed in the user_id.\n"
         )
 
-def create_biot_user(session, company):
+def create_biot_user(session, user_id_created, company):
     user_id = ("biot_" + company).strip()
     print("Adding biot admin user with user_id = " + user_id + " ...")
     user = {
@@ -98,12 +98,12 @@ if __name__ == "__main__":
             s.headers.update({"Authorization": f"Bearer {token}"})
             print("Authentication succeeded\n")
             
+            user_id_created = []
             print("Creating the BioT admin user...")
-            create_biot_user(s, company)
+            create_biot_user(s, user_id_created, company)
             print("BioT admin user created!")
 
             print("Creating users...")
-            user_id_created = []
             df.apply(
                 lambda row: create_user(s, row, user_id_created, company),
                 axis=1,
