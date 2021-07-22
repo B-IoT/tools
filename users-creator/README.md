@@ -21,7 +21,7 @@ pip install -r requirements.txt
 Then, create a file `.env` in `src/` with the following content:
 
 ```
-PASSWORD=<biot_user_password_in_company_db>
+PASSWORD=<biot_biot_user_password>
 ```
 
 ## Usage
