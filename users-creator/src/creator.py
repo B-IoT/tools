@@ -93,7 +93,7 @@ if __name__ == "__main__":
             print("Authenticating...")
             token = s.post(
                 f"{SERVER_URL}/oauth/token",
-                json={"username": f"biot_{company}", "password": PASSWORD},
+                json={"username": f"biot_biot", "password": PASSWORD},
             ).text
             s.headers.update({"Authorization": f"Bearer {token}"})
             print("Authentication succeeded\n")
