@@ -1,7 +1,7 @@
 # users-creator
 
 Given an Excel file, it creates items (should NOT violate any constraints of the DB) in the client's company database. The Excel file needs to have the following columns as header: beacon, category, service, itemID,
-brand, model, supplier, purchaseDate, purchasePrice, originLocation, currentLocation, room, contact, currentOwner, previousOwner, orderedNumber, color, serialNumber, maintenanceDate, comments. All other columns are
+brand, model, supplier, purchaseDate, purchasePrice, originLocation, currentLocation, room, contact, currentOwner, previousOwner, orderNumber, color, serialNumber, maintenanceDate, comments. All other columns are
 ignored. 
 The header should start at the first row of the Excel. 
 Empty fields are not allowed. 
@@ -33,7 +33,7 @@ Before usage, you need to make sure that the company's database has been created
 usage: creator.py [-h] [--delete] file company
 
 Given an Excel file, it creates items (should NOT violate any constraints of the DB) in the client's company database. The Excel file needs to have the following columns as header: beacon, category, service, itemID,
-brand, model, supplier, purchaseDate, purchasePrice, originLocation, currentLocation, room, contact, currentOwner, previousOwner, orderedNumber, color, serialNumber, maintenanceDate, comments. All other columns are
+brand, model, supplier, purchaseDate, purchasePrice, originLocation, currentLocation, room, contact, currentOwner, previousOwner, orderNumber, color, serialNumber, maintenanceDate, comments. All other columns are
 ignored. The header should start at the first row of the Excel. Empty fields are not allowed. purchaseDate and maintenanceDate need to have the following format: aaaa-mm-dd. Whitespaces are not allowed in itemID.
 
 positional arguments:

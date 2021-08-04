@@ -29,7 +29,7 @@ def is_valid(row):
     contact = row["contact"]
     currentOwner = row["currentOwner"]
     previousOwner = row["previousOwner"]
-    orderedNumber = row["orderedNumber"]
+    orderNumber = row["orderNumber"]
     color = row["color"]
     serialNumber = row["serialNumber"]
     maintenanceDate = row["maintenanceDate"]
@@ -73,7 +73,7 @@ def create_item(session, row, item_id_created, company):
         contact = row["contact"]
         currentOwner = row["currentOwner"]
         previousOwner = row["previousOwner"]
-        orderedNumber = row["orderedNumber"]
+        orderNumber = row["orderNumber"]
         color = row["color"]
         serialNumber = row["serialNumber"]
         maintenanceDate = row["maintenanceDate"]
@@ -101,7 +101,7 @@ def create_item(session, row, item_id_created, company):
             "contact" : contact,
             "currentOwner" : currentOwner,
             "previousOwner" : previousOwner,
-            "orderedNumber" : orderedNumber,
+            "orderNumber" : orderNumber,
             "color" : color,
             "serialNumber" : serialNumber,
             "maintenanceDate" : maintenanceDate,
@@ -150,7 +150,7 @@ if __name__ == "__main__":
         description="""
         Given an Excel file, it creates items (should NOT violate any constraints of the DB) in the client's company database.
         The Excel file needs to have the following columns as header: beacon, category, service, itemID, brand, model, supplier, 
-        purchaseDate, purchasePrice, originLocation, currentLocation, room, contact, currentOwner, previousOwner, orderedNumber, 
+        purchaseDate, purchasePrice, originLocation, currentLocation, room, contact, currentOwner, previousOwner, orderNumber, 
         color, serialNumber, maintenanceDate, comments. All other columns are ignored.\n
         The header should start at the first row of the Excel.\n
         Empty fields are not allowed.\n
@@ -188,7 +188,7 @@ if __name__ == "__main__":
                 "contact",
                 "currentOwner",
                 "previousOwner",
-                "orderedNumber",
+                "orderNumber",
                 "color",
                 "serialNumber",
                 "maintenanceDate",
