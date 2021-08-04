@@ -11,8 +11,8 @@ PASSWORD = config("PASSWORD")
 
 
 def is_valid(row):
-    if any(row.isna()):
-        return False
+    # if any(row.isna()):
+    #     return False
 
     beacon = row["beacon"]
     category = row["category"]
@@ -35,13 +35,19 @@ def is_valid(row):
     maintenanceDate = row["maintenanceDate"]
     comments = row["comments"]
 
+    if pd.isna(itemID) or re.search(r"\s", str(itemID)):
+        print(f'itemID does not match the required format. Found: {itemID}')
+        return False
+    if pd.isna(category):
+        print(f'category does not match the required format. Found: {category}')
+        return False
     if not re.match("[a-z][a-z]:[a-z][a-z]:[a-z][a-z]:[a-z][a-z]:[a-z][a-z]:[a-z][a-z]", beacon):
         print(f'beacon does not match the required format. Found: {beacon}')
         return False
-    if not purchaseDate == "" and not re.match("[0-9]{4}-[0-9]{2}-[0-9]{2}", purchaseDate):
+    if not pd.isna(purchaseDate) and not re.match("[0-9]{4}-[0-9]{2}-[0-9]{2}", purchaseDate):
         print(f'purchaseDate does not match the required format. Found: {purchaseDate}')
         return False
-    if not maintenanceDate == "" and not re.match("[0-9]{4}-[0-9]{2}-[0-9]{2}", maintenanceDate):
+    if not pd.isna(maintenanceDate) and not re.match("[0-9]{4}-[0-9]{2}-[0-9]{2}", maintenanceDate):
         print(f'purchaseDate does not match the required format. Found: {maintenanceDate}')
         return False
     
@@ -60,30 +66,25 @@ def create_item(session, row, item_id_created, company):
 
         beacon = row["beacon"]
         category = row["category"]
-        service = row["service"]
+        service = "" if pd.isna(row["service"]) else row["service"]
         itemID = row["itemID"]
-        brand = row["brand"]
-        model = row["model"]
-        supplier = row["supplier"]
-        purchaseDate = row["purchaseDate"]
-        purchasePrice = row["purchasePrice"]
-        originLocation = row["originLocation"]
-        currentLocation = row["currentLocation"]
-        room = row["room"]
-        contact = row["contact"]
-        currentOwner = row["currentOwner"]
-        previousOwner = row["previousOwner"]
-        orderNumber = row["orderNumber"]
-        color = row["color"]
-        serialNumber = row["serialNumber"]
-        maintenanceDate = row["maintenanceDate"]
-        comments = row["comments"]
+        brand = "" if pd.isna(row["brand"]) else row["brand"]
+        model = "" if pd.isna(row["model"]) else row["model"]
+        supplier = "" if pd.isna(row["supplier"]) else row["supplier"]
+        purchaseDate = "1900-01-01" if pd.isna(row["purchaseDate"]) else row["purchaseDate"]
+        purchasePrice = 0.0 if pd.isna(row["purchasePrice"]) else row["purchasePrice"]
+        originLocation = "" if pd.isna(row["originLocation"]) else row["originLocation"]
+        currentLocation = "" if pd.isna(row["currentLocation"]) else row["currentLocation"]
+        room = "" if pd.isna(row["room"]) else row["room"]
+        contact = "" if pd.isna(row["contact"]) else row["contact"]
+        currentOwner = "" if pd.isna(row["currentOwner"]) else row["currentOwner"]
+        previousOwner = "" if pd.isna(row["previousOwner"]) else row["previousOwner"]
+        orderNumber = "" if pd.isna(row["orderNumber"]) else row["orderNumber"]
+        color = "" if pd.isna(row["color"]) else row["color"]
+        serialNumber = "" if pd.isna(row["serialNumber"]) else row["serialNumber"]
+        maintenanceDate = "2999-01-01" if pd.isna(row["maintenanceDate"]) else row["maintenanceDate"]
+        comments = "" if pd.isna(row["comments"]) else row["comments"]
 
-        if purchaseDate == "":
-            purchaseDate = None
-
-        if maintenanceDate == "":
-            maintenanceDate = None
 
         item = {
             "beacon" : beacon,
@@ -153,8 +154,8 @@ if __name__ == "__main__":
         purchaseDate, purchasePrice, originLocation, currentLocation, room, contact, currentOwner, previousOwner, orderNumber, 
         color, serialNumber, maintenanceDate, comments. All other columns are ignored.\n
         The header should start at the first row of the Excel.\n
-        The beacon should be a MAC address with the format aa:aa:aa:aa:aa:aa.
-        Empty fields are not allowed for beacon, itemID and category.\n
+        Empty fields are not allowed for beacon, itemID and category. All other fields left blank will get a default value.\n
+        The beacon should be a MAC address and have the format aa:aa:aa:aa:aa:aa.
         
         purchaseDate and maintenanceDate need to have the following format: aaaa-mm-dd.\n
         Whitespaces are not allowed in itemID.
@@ -209,8 +210,8 @@ if __name__ == "__main__":
             itemID_created = []
 
             if delete:
-                confirmation = input(f"WARNING: this operation will delete all items from the DB for the company '{company}'! Are you sure you want to continue? [Y/n]: ")
-                if confirmation == "Y":
+                confirmation = input(f"WARNING: this operation will delete all items from the DB for the company '{company}'! Are you sure you want to continue? [y/N]: ")
+                if confirmation == "y" or confirmation == "Y":
                     print(f"Deleting all items from DB of company = {company}")
                     delete_all_items(s, company)
                     print(f"Done! Deleted all items from DB of company = {company}")
