@@ -208,9 +208,14 @@ if __name__ == "__main__":
             itemID_created = []
 
             if delete:
-                print(f"Deleting all items from DB of company = {company}")
-                delete_all_items(s, company)
-                print(f"Done! Deleted all items from DB of company = {company}")
+                confirmation = input(f"WARNING: this operation will delete all items from the DB for the company '{company}'! Are you sure you want to continue? [Y/n]: ")
+                if confirmation == "Y":
+                    print(f"Deleting all items from DB of company = {company}")
+                    delete_all_items(s, company)
+                    print(f"Done! Deleted all items from DB of company = {company}")
+                else:
+                    print("Okay, exiting...")
+                    exit()
 
             print("Creating items...")
             df.apply(
