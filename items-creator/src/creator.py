@@ -35,9 +35,9 @@ def is_valid(row):
     maintenanceDate = row["maintenanceDate"]
     comments = row["comments"]
 
-    # if not re.match("[a-z][a-z]:[a-z][a-z]:[a-z][a-z]:[a-z][a-z]:[a-z][a-z]:[a-z][a-z]", beacon):
-    #     print(f'beacon does not match the required format. Found: {beacon}')
-    #     return False
+    if not re.match("[a-z][a-z]:[a-z][a-z]:[a-z][a-z]:[a-z][a-z]:[a-z][a-z]:[a-z][a-z]", beacon):
+        print(f'beacon does not match the required format. Found: {beacon}')
+        return False
     if not purchaseDate == "" and not re.match("[0-9]{4}-[0-9]{2}-[0-9]{2}", purchaseDate):
         print(f'purchaseDate does not match the required format. Found: {purchaseDate}')
         return False
@@ -153,7 +153,8 @@ if __name__ == "__main__":
         purchaseDate, purchasePrice, originLocation, currentLocation, room, contact, currentOwner, previousOwner, orderNumber, 
         color, serialNumber, maintenanceDate, comments. All other columns are ignored.\n
         The header should start at the first row of the Excel.\n
-        Empty fields are not allowed.\n
+        The beacon should be a MAC address with the format aa:aa:aa:aa:aa:aa.
+        Empty fields are not allowed for beacon, itemID and category.\n
         
         purchaseDate and maintenanceDate need to have the following format: aaaa-mm-dd.\n
         Whitespaces are not allowed in itemID.
