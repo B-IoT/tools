@@ -1,4 +1,4 @@
-# users-creator
+# items-creator
 
 Given an Excel file, it creates items (should NOT violate any constraints of the DB) in the client's company database. The Excel file needs to have the following columns as header: beacon, category, service, itemID,
 brand, model, supplier, purchaseDate, purchasePrice, originLocation, currentLocation, room, contact, currentOwner, previousOwner, orderNumber, color, serialNumber, maintenanceDate, comments. All other columns are
