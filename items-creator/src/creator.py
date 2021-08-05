@@ -51,11 +51,12 @@ def is_valid(row):
         print(f'purchaseDate does not match the required format. Found: {maintenanceDate}')
         return False
     
-    try:
-        float(purchasePrice)
-    except:
-        print(f'purchasePrice does not match the required format. Found: {purchasePrice}, required: a float number.')
-        return False
+    if not pd.isna(purchasePrice):
+        try:
+            float(purchasePrice)
+        except:
+            print(f'purchasePrice does not match the required format. Found: {purchasePrice}, required: a float number.')
+            return False
 
     return True
 
@@ -63,52 +64,69 @@ def create_item(session, row, item_id_created, company):
     if is_valid(row):
         item_id = row["itemID"].strip()
         print("Adding item with itemID = " + item_id + " ...")
-
+        
         beacon = row["beacon"]
         category = row["category"]
-        service = "" if pd.isna(row["service"]) else row["service"]
         itemID = row["itemID"]
-        brand = "" if pd.isna(row["brand"]) else row["brand"]
-        model = "" if pd.isna(row["model"]) else row["model"]
-        supplier = "" if pd.isna(row["supplier"]) else row["supplier"]
-        purchaseDate = "1900-01-01" if pd.isna(row["purchaseDate"]) else row["purchaseDate"]
-        purchasePrice = 0.0 if pd.isna(row["purchasePrice"]) else row["purchasePrice"]
-        originLocation = "" if pd.isna(row["originLocation"]) else row["originLocation"]
-        currentLocation = "" if pd.isna(row["currentLocation"]) else row["currentLocation"]
-        room = "" if pd.isna(row["room"]) else row["room"]
-        contact = "" if pd.isna(row["contact"]) else row["contact"]
-        currentOwner = "" if pd.isna(row["currentOwner"]) else row["currentOwner"]
-        previousOwner = "" if pd.isna(row["previousOwner"]) else row["previousOwner"]
-        orderNumber = "" if pd.isna(row["orderNumber"]) else row["orderNumber"]
-        color = "" if pd.isna(row["color"]) else row["color"]
-        serialNumber = "" if pd.isna(row["serialNumber"]) else row["serialNumber"]
-        maintenanceDate = "2999-01-01" if pd.isna(row["maintenanceDate"]) else row["maintenanceDate"]
-        comments = "" if pd.isna(row["comments"]) else row["comments"]
 
+        service = row["service"]
+        brand = row["brand"]
+        model = row["model"]
+        supplier = row["supplier"]
+        purchaseDate = row["purchaseDate"]
+        purchasePrice = row["purchasePrice"]
+        originLocation = row["originLocation"]
+        currentLocation = row["currentLocation"]
+        room = row["room"]
+        contact = row["contact"]
+        currentOwner = row["currentOwner"]
+        previousOwner = row["previousOwner"]
+        orderNumber = row["orderNumber"]
+        color = row["color"]
+        serialNumber = row["serialNumber"]
+        maintenanceDate = row["maintenanceDate"]
+        comments = row["comments"]
 
         item = {
             "beacon" : beacon,
             "category" : category,
-            "service" : service,
-            "itemID" : itemID,
-            "brand" : brand,
-            "model" : model,
-            "supplier" : supplier,
-            "purchaseDate" : purchaseDate,
-            "purchasePrice" : purchasePrice,
-            "originLocation" : originLocation,
-            "currentLocation" : currentLocation,
-            "room" : room,
-            "contact" : contact,
-            "currentOwner" : currentOwner,
-            "previousOwner" : previousOwner,
-            "orderNumber" : orderNumber,
-            "color" : color,
-            "serialNumber" : serialNumber,
-            "maintenanceDate" : maintenanceDate,
-            "comments" : comments
+            "itemID" : itemID
         }
-        
+
+        if not pd.isna(service):
+            item["service"] = service
+        if not pd.isna(brand):
+            item["brand"] = brand
+        if not pd.isna(model):
+            item["model"] = model
+        if not pd.isna(supplier):
+            item["supplier"] = supplier
+        if not pd.isna(purchaseDate):
+            item["purchaseDate"] = purchaseDate
+        if not pd.isna(purchasePrice):
+            item["purchasePrice"] = purchasePrice
+        if not pd.isna(originLocation):
+            item["originLocation"] = originLocation
+        if not pd.isna(currentLocation):
+            item["currentLocation"] = currentLocation
+        if not pd.isna(room):
+            item["room"] = room
+        if not pd.isna(contact):
+            item["contact"] = contact
+        if not pd.isna(currentOwner):
+            item["currentOwner"] = currentOwner
+        if not pd.isna(previousOwner):
+            item["previousOwner"] = previousOwner
+        if not pd.isna(orderNumber):
+            item["orderNumber"] = orderNumber
+        if not pd.isna(color):
+            item["color"] = color
+        if not pd.isna(serialNumber):
+            item["serialNumber"] = serialNumber
+        if not pd.isna(maintenanceDate):
+            item["maintenanceDate"] = maintenanceDate
+        if not pd.isna(comments):
+            item["comments"] = comments
 
         try:
             # Create
@@ -154,7 +172,7 @@ if __name__ == "__main__":
         purchaseDate, purchasePrice, originLocation, currentLocation, room, contact, currentOwner, previousOwner, orderNumber, 
         color, serialNumber, maintenanceDate, comments. All other columns are ignored.\n
         The header should start at the first row of the Excel.\n
-        Empty fields are not allowed for beacon, itemID and category. All other fields left blank will get a default value.\n
+        Empty fields are not allowed for beacon, itemID and category.\n
         The beacon should be a MAC address and have the format aa:aa:aa:aa:aa:aa.
         
         purchaseDate and maintenanceDate need to have the following format: aaaa-mm-dd.\n
