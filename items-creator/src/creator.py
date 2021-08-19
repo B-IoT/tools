@@ -6,7 +6,7 @@ import argparse
 from decouple import config
 import re
 
-SERVER_URL = "https://api.b-iot.ch:8080"
+SERVER_URL = "https://api.b-iot.ch:443"
 PASSWORD = config("PASSWORD")
 
 
