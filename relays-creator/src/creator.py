@@ -38,7 +38,10 @@ def create_or_update_relay(session, row, ids_created, ids_updated):
             "wifi": {
                 "ssid": row["wifi_ssid"].strip(),
                 "password": row["wifi_password"].strip(),
+                "reset": False
             },
+            "reboot": False,
+            "forceReset": False,
         }
 
         try:

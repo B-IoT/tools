@@ -41,7 +41,7 @@ def is_valid(row):
     if pd.isna(category):
         print(f'category does not match the required format. Found: {category}')
         return False
-    if not re.match("[a-z][a-z]:[a-z][a-z]:[a-z][a-z]:[a-z][a-z]:[a-z][a-z]:[a-z][a-z]", beacon):
+    if not re.match("[a-z0-9][a-z0-9]:[a-z0-9][a-z0-9]:[a-z0-9][a-z0-9]:[a-z0-9][a-z0-9]:[a-z0-9][a-z0-9]:[a-z0-9][a-z0-9]", beacon):
         print(f'beacon does not match the required format. Found: {beacon}')
         return False
     if not pd.isna(purchaseDate) and not re.match("[0-9]{4}-[0-9]{2}-[0-9]{2}", purchaseDate):
