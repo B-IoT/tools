@@ -108,8 +108,6 @@ if __name__ == "__main__":
             "longitude",
             "latitude",
             "floor",
-            "username",
-            "password",
             "wifi_ssid",
             "wifi_password",
         ]
