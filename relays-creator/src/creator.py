@@ -125,9 +125,9 @@ if __name__ == "__main__":
             if delete:
                 confirmation = input(f"WARNING: this operation will delete all relays from the DB for the company '{company}'! Are you sure you want to continue? [y/N]: ")
                 if confirmation == "y" or confirmation == "Y":
-                    print(f"Deleting all relays from DB of company = {company}")
+                    print(f"Deleting all relays from DB of company '{company}'")
                     delete_all_relays(s, company)
-                    print(f"Done! Deleted all relays from DB of company = {company}")
+                    print(f"Done! Deleted all relays from DB of company '{company}'")
                 else:
                     print("Okay, exiting...")
                     exit()
@@ -141,7 +141,7 @@ if __name__ == "__main__":
 
             if ids_created:
                 print(
-                    f"Created {len(ids_created)} relays for company {company}:\n{ids_created}\n"
+                    f"Created {len(ids_created)} relays for company '{company}':\n{ids_created}\n"
                 )
 
             print("Bye!")
