@@ -30,12 +30,12 @@ def create_relay(session, row, ids_created):
             "mqttID": relay_id,
             "relayID": relay_id,
             "ledStatus": True,
-            "latitude": row["latitude"],
-            "longitude": row["longitude"],
+            "latitude": float(row["latitude"]),
+            "longitude": float(row["longitude"]),
             "floor": int(row["floor"]),
             "wifi": {
-                "ssid": row["wifi_ssid"].strip(),
-                "password": row["wifi_password"].strip(),
+                "ssid": str(row["wifi_ssid"]).strip(),
+                "password": str(row["wifi_password"]).strip(),
                 "reset": False
             },
             "reboot": False,
